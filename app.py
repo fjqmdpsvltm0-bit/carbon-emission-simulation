@@ -1163,18 +1163,18 @@ def segment_detail_dialog():
             for seg in segments:
                 for subseg in seg.get('segments', []):
                     row = {
-                        'Sec': subseg.get('section') ,
-                        'Dist(km)': subseg.get('distance_km') ,
-                        'NavSpeed': subseg.get('naver_avg_speed') ,
-                        'Fuel/H₂': subseg.get('fuel_or_h2') ,
-                        'OpCO₂': subseg.get('operation_co2_coef') ,
-                        'MfgCO₂': subseg.get('manufacturing_co2_coef') ,
-                        'TotalCO₂': subseg.get('total_co2_coef') ,
-                        'Grade': subseg.get('segment_grade') ,
-                        'FinalSpd': subseg.get('final_speed') ,
-                        'Cong(%)': subseg.get('congestion_ratio') ,
-                        'CO₂(kg)': subseg.get('segment_co2') ,
-                        'Label': subseg.get('congestion_label') 
+                        'Sec': subseg['section'],
+                        'Dist(km)': subseg['distance_km'],
+                        'NavSpeed': subseg['naver_speed'],
+                        'Fuel/H₂': subseg['fuel_or_h2'],
+                        'OpCO₂': subseg['operation_coef'],
+                        'MfgCO₂': subseg['manufacturing_coef'],
+                        'TotalCO₂': subseg['total_coef'],
+                        'Grade': subseg['segment_grade'],
+                        'FinalSpd': subseg['final_speed'],
+                        'Cong(%)': subseg['congestion_ratio'],
+                        'CO₂(kg)': subseg['segment_co2'],
+                        'Label': subseg['congestion_label'] 
                     }
                     all_rows.append(row)
             if all_rows:
