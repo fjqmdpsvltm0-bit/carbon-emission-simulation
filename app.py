@@ -12,10 +12,10 @@ import math
 
 st.set_page_config(layout="wide", page_title="물류 경로 분석")
 
-CLIENT_ID           = st.secrets[CLIENT_ID]
-CLIENT_SECRET       = st.secrets[CLIENT_SECRET]
-SEARCH_CLIENT_ID    = st.secrets[SEARCH_CLIENT_ID]
-SEARCH_CLIENT_SECRET= st.secrets[SEARCH_CLIENT_SECRET]
+CLIENT_ID           = st.secrets["CLIENT_ID"]
+CLIENT_SECRET       = st.secrets["CLIENT_SECRET"]
+SEARCH_CLIENT_ID    = st.secrets["SEARCH_CLIENT_ID"]
+SEARCH_CLIENT_SECRET= st.secrets["SEARCH_CLIENT_SECRET"]
 
 # ============================================================================
 # 【탄소배출 상수】
@@ -1220,3 +1220,4 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
