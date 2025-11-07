@@ -1163,18 +1163,18 @@ def segment_detail_dialog():
             for seg in segments:
                 for subseg in seg.get('segments', []):
                     row = {
-                        'Sec': subseg.get('section') or subseg.get('Sec') or '',
-                        'Dist(km)': subseg.get('distance_km') or subseg.get('dist') or '',
-                        'NavSpeed': subseg.get('naver_speed') or subseg.get('Naver') or '',
-                        'Fuel/H₂': subseg.get('fuel_or_h2') or subseg.get('Fuel') or '',
-                        'OpCO₂': subseg.get('operation_coef') or subseg.get('Op') or '',
-                        'MfgCO₂': subseg.get('manufacturing_coef') or subseg.get('Mfg') or '',
-                        'TotalCO₂': subseg.get('total_coef') or subseg.get('Total') or '',
-                        'Grade': subseg.get('segment_grade') or subseg.get('Grade') or '',
-                        'FinalSpd': subseg.get('final_speed') or subseg.get('Final') or '',
-                        'Cong(%)': subseg.get('congestion_ratio') or subseg.get('Cong%') or '',
-                        'CO₂(kg)': subseg.get('segment_co2') or subseg.get('CO2') or '',
-                        'Label': subseg.get('congestion_label') or subseg.get('Label') or '',
+                        'Sec': subseg.get('section') ,
+                        'Dist(km)': subseg.get('distance_km') ,
+                        'NavSpeed': subseg.get('naver_avg_speed') ,
+                        'Fuel/H₂': subseg.get('fuel_or_h2') ,
+                        'OpCO₂': subseg.get('operation_co2_coef') ,
+                        'MfgCO₂': subseg.get('manufacturing_co2_coef') ,
+                        'TotalCO₂': subseg.get('total_co2_coef') ,
+                        'Grade': subseg.get('segment_grade') ,
+                        'FinalSpd': subseg.get('final_speed') ,
+                        'Cong(%)': subseg.get('congestion_ratio') ,
+                        'CO₂(kg)': subseg.get('segment_co2') ,
+                        'Label': subseg.get('congestion_label') 
                     }
                     all_rows.append(row)
             if all_rows:
@@ -1261,6 +1261,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
