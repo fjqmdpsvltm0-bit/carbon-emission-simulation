@@ -1170,7 +1170,7 @@ def segment_detail_dialog():
                         'OpCO₂': f"{subseg.get('operation_coef', 0):.4f}",
                         'MfgCO₂': f"{subseg.get('manufacturing_coef', 0):.4f}",
                         'TotalCO₂': f"{subseg.get('total_coef', 0):.4f}",
-                        'Grade': f"{subseg.get('segment_grade', 0):.1f}",
+                        'Grade': f"{subseg.get('grade', 0):.1f}",
                         'FinalSpd': f"{subseg.get('final_speed', 0):.1f}",
                         'Cong(%)': f"{subseg.get('congestion_ratio', 0):.1f}",
                         'CO₂(kg)': f"{subseg.get('segment_co2', 0):.3f}",
@@ -1261,6 +1261,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
