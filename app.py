@@ -1145,54 +1145,42 @@ def route_result_dialog():
             col4.metric('⚙️ 무게-마력비', f"{power_to_weight:.2f} kg/kW")
             
             st.divider()
-@st.dialog('🚦 구간별 CO₂/연료 상세 보기', width='large')
+@st.dialog('차종별 구간별 보기', width='large')
 def segment_detail_dialog():
     result = st.session_state.route_result
     if not result:
-        st.info("분석 결과가 없습니다!")
+        st.info("분석 결과 없음!")
         return
-
-    st.markdown('### 차종별 경로 구간별 분석')
     route_types = [rt for rt in ['traoptimal', 'trafast', 'tracomfort'] if rt in result]
-    tabs = st.tabs([f"{rt.upper()}" for rt in route_types])  # 최적, 빠름, 편한경로별
-
+    tabs = st.tabs([f"{rt.upper()}" for rt in route_types])
     for tab, route_type in zip(tabs, route_types):
         with tab:
             route_result_data = result[route_type]
             segments = route_result_data.get('segments', [])
-            vehicle_type = result.get('vehicle_type', '미지정')
-            load_percent = result.get('current_load', 0) / result.get('max_load', 1) if result.get('max_load', 1) > 0 else 0
-
-            st.markdown(f"#### 🚗 경로타입: {route_type.upper()} / 차종: {vehicle_type}")
-            st.markdown(f"적재율: {load_percent*100:.1f}% | 구간 수: {sum(len(seg.get('segments', [])) for seg in segments)}")
-            # 구간별 요약 표(대형, 수소 등)
-            for seg_idx, seg in enumerate(segments):
-                segment_list = seg.get('segments', [])
-                if not segment_list:
-                    continue
-                st.markdown(f"**구간 {seg_idx+1}: {seg['start_info'].get('title')[:15]} → {seg['end_info'].get('title')[:15]} (총 {len(segment_list)}개)**")
-                table_data = []
-                for subseg in segment_list:
-                    table_data.append({
-                        'Sec': subseg['section'],
-                        'Dist(km)': f"{subseg['distance_km']:.2f}",
-                        'NavSpeed': f"{subseg['naver_speed']:.1f}",
-                        'Fuel/H₂': f"{subseg['fuel_or_h2']:.4f}",
-                        'OpCO₂': f"{subseg['operation_coef']:.4f}",
-                        'MfgCO₂': f"{subseg['manufacturing_coef']:.4f}",
-                        'TotalCO₂': f"{subseg['total_coef']:.4f}",
-                        'Grade': f"{subseg['segment_grade']:.1f}",
-                        'FinalSpd': f"{subseg['final_speed']:.1f}",
-                        'Cong(%)': f"{subseg['congestion_ratio']:.1f}",
-                        'CO₂(kg)': f"{subseg['segment_co2']:.3f}",
-                        'Label': subseg['congestion_label']
-                    })
-                # 표 띄우기
-                st.dataframe(table_data, use_container_width=True)
-                # 세부 구간 expander도 제공
-                for subseg in segment_list:
-                    with st.expander(f"구간 {subseg['section']} | {subseg['congestion_label']} | CO₂ {subseg['segment_co2']:.3f}"):
-                        st.write({k: v for k, v in subseg.items() if k != 'path'})
+            st.markdown(f"#### {route_type.upper()} 경로 결과")
+            # (1) 구간별 표 만들기 - KeyError 방지
+            all_rows = []
+            for seg in segments:
+                for subseg in seg.get('segments', []):
+                    row = {
+                        'Sec': subseg.get('section') or subseg.get('Sec') or '',
+                        'Dist(km)': subseg.get('distance_km') or subseg.get('dist') or '',
+                        'NavSpeed': subseg.get('naver_speed') or subseg.get('Naver') or '',
+                        'Fuel/H₂': subseg.get('fuel_or_h2') or subseg.get('Fuel') or '',
+                        'OpCO₂': subseg.get('operation_coef') or subseg.get('Op') or '',
+                        'MfgCO₂': subseg.get('manufacturing_coef') or subseg.get('Mfg') or '',
+                        'TotalCO₂': subseg.get('total_coef') or subseg.get('Total') or '',
+                        'Grade': subseg.get('segment_grade') or subseg.get('Grade') or '',
+                        'FinalSpd': subseg.get('final_speed') or subseg.get('Final') or '',
+                        'Cong(%)': subseg.get('congestion_ratio') or subseg.get('Cong%') or '',
+                        'CO₂(kg)': subseg.get('segment_co2') or subseg.get('CO2') or '',
+                        'Label': subseg.get('congestion_label') or subseg.get('Label') or '',
+                    }
+                    all_rows.append(row)
+            if all_rows:
+                st.dataframe(all_rows, use_container_width=True)
+            else:
+                st.info("구간 데이터가 없습니다.")
 # ============================================================================
 # 【메인 화면】
 # ============================================================================
@@ -1273,6 +1261,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
