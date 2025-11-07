@@ -1167,32 +1167,34 @@ def segment_detail_dialog():
             st.markdown(f"적재율: {load_percent*100:.1f}% | 구간 수: {sum(len(seg.get('segments', [])) for seg in segments)}")
             # 구간별 요약 표(대형, 수소 등)
             for seg_idx, seg in enumerate(segments):
-                segment_list = seg.get('segments', [])
-                if not segment_list:
-                    continue
-                st.markdown(f"**구간 {seg_idx+1}: {seg['start_info'].get('title')[:15]} → {seg['end_info'].get('title')[:15]} (총 {len(segment_list)}개)**")
-                table_data = []
-                for subseg in segment_list:
-                    table_data.append({
-                        'Sec': subseg['section'],
-                        'Dist(km)': f"{subseg['distance_km']:.2f}",
-                        'NavSpeed': f"{subseg['naver_speed']:.1f}",
-                        'Fuel/H₂': f"{subseg['fuel_or_h2']:.4f}",
-                        'OpCO₂': f"{subseg['operation_coef']:.4f}",
-                        'MfgCO₂': f"{subseg['manufacturing_coef']:.4f}",
-                        'TotalCO₂': f"{subseg['total_coef']:.4f}",
-                        'Grade': f"{subseg['segment_grade']:.1f}",
-                        'FinalSpd': f"{subseg['final_speed']:.1f}",
-                        'Cong(%)': f"{subseg['congestion_ratio']:.1f}",
-                        'CO₂(kg)': f"{subseg['segment_co2']:.3f}",
-                        'Label': subseg['congestion_label']
-                    })
-                # 표 띄우기
-                st.dataframe(table_data, use_container_width=True)
-                # 세부 구간 expander도 제공
-                for subseg in segment_list:
-                    with st.expander(f"구간 {subseg['section']} | {subseg['congestion_label']} | CO₂ {subseg['segment_co2']:.3f}"):
-                        st.write({k: v for k, v in subseg.items() if k != 'path'})
+    segment_list = seg.get('segments', [])
+    if not segment_list:
+        continue
+    st.markdown(f"**구간 {seg_idx+1}: {seg['start_info'].get('title')[:15]} → {seg['end_info'].get('title')[:15]} (총 {len(segment_list)}개)**")
+    table_data = []
+    for subseg_idx, subseg in enumerate(segment_list):
+        # 'section' 키가 없으면 번호 대입, 없는 키는 '' 기본값
+        table_data.append({
+            'Sec': subseg.get('section', subseg.get('segment_num', subseg_idx+1)),
+            'Dist(km)': f"{subseg.get('distance_km', 0):.2f}",
+            'NavSpeed': f"{subseg.get('naver_speed', 0):.1f}",
+            'Fuel/H₂': f"{subseg.get('fuel_or_h2', 0):.4f}",
+            'OpCO₂': f"{subseg.get('operation_coef', 0):.4f}",
+            'MfgCO₂': f"{subseg.get('manufacturing_coef', 0):.4f}",
+            'TotalCO₂': f"{subseg.get('total_coef', 0):.4f}",
+            'Grade': f"{subseg.get('segment_grade', 0):.1f}",
+            'FinalSpd': f"{subseg.get('final_speed', 0):.1f}",
+            'Cong(%)': f"{subseg.get('congestion_ratio', 0):.1f}",
+            'CO₂(kg)': f"{subseg.get('segment_co2', 0):.3f}",
+            'Label': subseg.get('congestion_label', '')
+        })
+    st.dataframe(table_data, use_container_width=True)
+    for subseg_idx, subseg in enumerate(segment_list):
+        sec_num = subseg.get('section', subseg.get('segment_num', subseg_idx+1))
+        co2_val = subseg.get('segment_co2', 0)
+        label = subseg.get('congestion_label', '')
+        with st.expander(f"구간 {sec_num} | {label} | CO₂ {co2_val:.3f}"):
+            st.write({k: v for k, v in subseg.items() if k != 'path'})
 # ============================================================================
 # 【메인 화면】
 # ============================================================================
@@ -1273,5 +1275,6 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
