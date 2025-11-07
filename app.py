@@ -1158,23 +1158,23 @@ def segment_detail_dialog():
             route_result_data = result[route_type]
             segments = route_result_data.get('segments', [])
             st.markdown(f"#### {route_type.upper()} 경로 결과")
-            # (1) 구간별 표 만들기 - KeyError 방지
+            # (1) 구간별 표 만들기 - 안전하게 .get()만 사용
             all_rows = []
             for seg in segments:
                 for subseg in seg.get('segments', []):
                     row = {
-                        'Sec': subseg['section'],
-                        'Dist(km)': subseg['distance_km'],
-                        'NavSpeed': subseg['naver_speed'],
-                        'Fuel/H₂': subseg['fuel_or_h2'],
-                        'OpCO₂': subseg['operation_coef'],
-                        'MfgCO₂': subseg['manufacturing_coef'],
-                        'TotalCO₂': subseg['total_coef'],
-                        'Grade': subseg['segment_grade'],
-                        'FinalSpd': subseg['final_speed'],
-                        'Cong(%)': subseg['congestion_ratio'],
-                        'CO₂(kg)': subseg['segment_co2'],
-                        'Label': subseg['congestion_label'] 
+                        'Sec': subseg.get('section', ''),
+                        'Dist(km)': f"{subseg.get('distance_km', 0):.2f}",
+                        'NavSpeed': f"{subseg.get('naver_speed', 0):.1f}",
+                        'Fuel/H₂': f"{subseg.get('fuel_or_h2', 0):.4f}",
+                        'OpCO₂': f"{subseg.get('operation_coef', 0):.4f}",
+                        'MfgCO₂': f"{subseg.get('manufacturing_coef', 0):.4f}",
+                        'TotalCO₂': f"{subseg.get('total_coef', 0):.4f}",
+                        'Grade': f"{subseg.get('segment_grade', 0):.1f}",
+                        'FinalSpd': f"{subseg.get('final_speed', 0):.1f}",
+                        'Cong(%)': f"{subseg.get('congestion_ratio', 0):.1f}",
+                        'CO₂(kg)': f"{subseg.get('segment_co2', 0):.3f}",
+                        'Label': subseg.get('congestion_label', '')
                     }
                     all_rows.append(row)
             if all_rows:
@@ -1261,6 +1261,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
