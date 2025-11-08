@@ -1167,11 +1167,11 @@ def segment_detail_dialog():
                         'Dist(km)': f"{subseg.get('distance_km', 0):.2f}",
                         'NavSpeed': f"{subseg.get('avg_speed', 0):.1f}",
                         'Fuel/H₂': f"{subseg.get('fuel_or_h2', 0):.4f}",
-                        'OpCO₂': f"{subseg.get('operation_coef', 0):.4f}",
-                        'MfgCO₂': f"{subseg.get('manufacturing_coef', 0):.4f}",
-                        'TotalCO₂': f"{subseg.get('total_co2', 0):.4f}",
+                        'OpCO₂': f"{subseg.get('operationco2coef', 0):.4f}",
+                        'MfgCO₂': f"{subseg.get('manufacturingc02coef', 0):.4f}",
+                        'TotalCO₂': f"{subseg.get('totalco2coef', 0):.4f}",
                         'Grade': f"{subseg.get('grade', 0):.1f}",
-                        'FinalSpd': f"{subseg.get('final_speed', 0):.1f}",
+                        'FinalSpd': f"{subseg.get('finalspeed', 0):.1f}",
                         'Cong(%)': f"{subseg.get('congestion_ratio', 0):.1f}",
                         'Label': subseg.get('label', '')
                     }
@@ -1260,6 +1260,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
