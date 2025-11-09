@@ -788,10 +788,6 @@ def analyze_route_segments(segments, vehicle_type, current_load, departure_datet
         
         arrival_time = current_time + timedelta(minutes=duration_by_final_speed)
 
-        st.write(f"DEBUG - operationco2coef: {operationco2coef}")
-        st.write(f"DEBUG - manufacturingco2coef: {manufacturingco2coef}")
-        st.write(f"DEBUG - totalco2coef: {totalco2coef}")
-        st.write(f"DEBUG - segmentco2emission: {segmentco2emission}")
         segment_analysis.append({
             **seg,
             "grade": grade,
@@ -1264,6 +1260,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
