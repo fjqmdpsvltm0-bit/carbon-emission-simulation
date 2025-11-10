@@ -188,8 +188,10 @@ def split_polyline_by_1km_distance(polyline_coords):
     
     return segments
 
-def match_guide_data_to_segments(guide_array, segments, grade=0):
-    """Guide 데이터를 Segment에 매칭"""
+def match_guide_data_to_segments(guide_array, segments, grade=0, vehicle_type=None, load_percent=0):
+    """
+    Guide 데이터를 Segment에 매칭 + 연료/CO2 계산 추가 ✅
+    """
     
     if not guide_array:
         return segments
@@ -245,13 +247,59 @@ def match_guide_data_to_segments(guide_array, segments, grade=0):
         
         congestion_ratio, congestion_level = calculate_congestion_from_speed(avg_speed)
         
+        # ✅ 여기부터 추가 계산 필요!
+        segment_grade = segment.get('grade', grade)
+        
+        # 1. 속도계수 계산
+        speed_factor = calculate_speed_factor_from_table2(
+            vehicle_type, load_percent, segment_grade
+        )
+        
+        # 2. 최종 속도 계산
+        final_speed = avg_speed * speed_factor
+        
+        # 3. 연료/H2 계산
+        fuel_or_h2 = get_table2_fuel_consumption(
+            vehicle_type, load_percent, segment_grade
+        )
+        
+        # 4. CO2 계수 계산
+        operation_co2_coef = calculate_operation_co2_coefficient(
+            vehicle_type, final_speed
+        )
+        manufacturing_co2_coef = calculate_manufacturing_co2_coefficient(
+            vehicle_type, load_percent
+        )
+        total_co2_coef = operation_co2_coef + manufacturing_co2_coef
+        
+        # 5. 구간 CO2 계산
+        segment_co2 = total_co2_coef * seg_distance_km
+        
+        # 6. H2 총량 계산 (수소일 경우)
+        if vehicle_type == "수소-대형":
+            h2_total = fuel_or_h2 * seg_distance_km
+        else:
+            h2_total = 0
+        
+        # ✅ 모든 계산값 저장!
         segment['avg_speed'] = avg_speed
         segment['congestion_ratio'] = congestion_ratio
         segment['congestion_level'] = congestion_level
         segment['color'] = congestion_to_color(congestion_ratio)
         segment['label'] = congestion_to_label(congestion_ratio)
         segment['guide_duration_ms'] = seg_duration_ms
-        segment['grade'] = grade
+        segment['grade'] = segment_grade
+        
+        # ✅ 새로 추가된 값들
+        segment['speed_factor'] = speed_factor
+        segment['final_speed'] = final_speed
+        segment['fuel_or_h2'] = fuel_or_h2
+        segment['operation_coef'] = operation_co2_coef
+        segment['manufacturing_coef'] = manufacturing_co2_coef
+        segment['total_co2'] = total_co2_coef
+        segment['segment_co2'] = segment_co2
+        segment['h2_total'] = h2_total
+        
         segment_cumulative_dist += seg_distance_km
     
     return segments
@@ -1264,6 +1312,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
