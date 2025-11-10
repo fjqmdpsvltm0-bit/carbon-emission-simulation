@@ -902,9 +902,9 @@ def route_analysis_dialog():
     st.markdown("### 📅 출발 일시")
     col1, col2 = st.columns(2)
     with col1:
-    departure_date = st.date_input("날짜", value=now_kst.date(), key="input_date")
+        departure_date = st.date_input("날짜", value=now_kst.date(), key="input_date")
     with col2:
-    departure_time = st.time_input("시각", value=now_kst.time(), key="input_time", step=300)
+        departure_time = st.time_input("시각", value=now_kst.time(), key="input_time", step=300)
     
     st.markdown("---")
     st.markdown("### 🚛 차종 선택")
@@ -1264,6 +1264,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
