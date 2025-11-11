@@ -905,7 +905,7 @@ def route_analysis_dialog():
     col1, col2 = st.columns(2)
     
     with col1:
-        start_query = st.text_input("🔴 출발지 검색", placeholder="예: 인천대학교", key="start_search_input")
+        start_query = st.text_input("🔴 출발지 검색", placeholder="예: KCC대전물류센터터", key="start_search_input")
         if st.button("출발지 검색", key="btn_search_start", use_container_width=True):
             if start_query:
                 with st.spinner("검색 중..."):
@@ -926,7 +926,7 @@ def route_analysis_dialog():
             st.session_state.temp_markers["start"] = (start_lat, start_lng, start_item)
     
     with col2:
-        goal_query = st.text_input("🔵 도착지 검색", placeholder="예: 서울역", key="goal_search_input")
+        goal_query = st.text_input("🔵 도착지 검색", placeholder="예: 중부권물류센터", key="goal_search_input")
         if st.button("도착지 검색", key="btn_search_goal", use_container_width=True):
             if goal_query:
                 with st.spinner("검색 중..."):
@@ -1312,6 +1312,7 @@ if st.session_state.route_result:
     m.fit_bounds([[coord[0], coord[1]] for coord in all_coords], padding=[50, 50])
 
 st_folium(m, width="100%", height=1200, key="main_map")
+
 
 
 
